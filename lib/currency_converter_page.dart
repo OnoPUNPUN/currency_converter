@@ -22,18 +22,21 @@ class _CurrencyConverterPageState extends State<CurrencyConverterPage> {
   final double conversionRate = 0.0082;
 
   @override
+  void dispose() {
+    amountController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade800,
       appBar: AppBar(
         backgroundColor: Colors.blueGrey.shade900,
-        elevation: 2, // Add a subtle shadow
+        elevation: 2,
         title: const Text(
           'Currency Converter',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -56,54 +59,110 @@ class _CurrencyConverterPageState extends State<CurrencyConverterPage> {
               const SizedBox(height: 20),
               TextField(
                 controller: amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 style: const TextStyle(color: Colors.black87),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey.shade200,
                   hintText: 'Enter amount in BDT',
                   hintStyle: TextStyle(color: Colors.grey.shade600),
-                  prefixIcon: const Icon(Icons.currency_rupee_rounded, color: Colors.black87),
-                  focusedBorder: border.copyWith(borderSide: const BorderSide(color: Colors.indigoAccent, width: 3.0)),
+                  prefixIcon: const Icon(
+                    Icons.currency_rupee_rounded,
+                    color: Colors.black87,
+                  ),
+                  focusedBorder: border.copyWith(
+                    borderSide: const BorderSide(
+                      color: Colors.indigoAccent,
+                      width: 3.0,
+                    ),
+                  ),
                   enabledBorder: border,
-                  errorBorder: border.copyWith(borderSide: const BorderSide(color: Colors.redAccent, width: 3.0)),
-                  focusedErrorBorder: border.copyWith(borderSide: const BorderSide(color: Colors.red, width: 3.0)),
+                  errorBorder: border.copyWith(
+                    borderSide: const BorderSide(
+                      color: Colors.redAccent,
+                      width: 3.0,
+                    ),
+                  ),
+                  focusedErrorBorder: border.copyWith(
+                    borderSide: const BorderSide(color: Colors.red, width: 3.0),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (amountController.text.isNotEmpty) {
-                    setState(() {
-                      final double? amount = double.tryParse(amountController.text);
-                      if (amount != null) {
-                        results = amount * conversionRate;
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter a valid number.')),
-                        );
-                        results = 0.0;
-                      }
-                    });
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please enter an amount.')),
-                    );
-                    setState(() {
-                      results = 0.0;
-                    });
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (amountController.text.isNotEmpty) {
+                          setState(() {
+                            final double? amount = double.tryParse(
+                              amountController.text,
+                            );
+                            if (amount != null) {
+                              results = amount * conversionRate;
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please enter a valid number.'),
+                                ),
+                              );
+                              results = 0.0;
+                            }
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enter an amount.'),
+                            ),
+                          );
+                          setState(() {
+                            results = 0.0;
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigo,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      child: const Text('Convert to USD'),
+                    ),
                   ),
-                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-                child: const Text('Convert to USD'),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          amountController.clear();
+                          results = 0.0;
+                        });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.grey, width: 1.5),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      child: const Text('Clear'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
